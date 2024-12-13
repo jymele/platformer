@@ -6,6 +6,7 @@ import * as THREE from "three";
 // import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
+import { RigidBody } from "@react-three/rapier";
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -21,12 +22,14 @@ export function Terrain(props: JSX.IntrinsicElements["group"]) {
 
   return (
     <group {...props} dispose={null}>
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube.geometry}
-        material={materials.Material}
-      />
+      <RigidBody type="fixed" colliders="trimesh">
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube.geometry}
+          material={materials.Material}
+        />
+      </RigidBody>
     </group>
   );
 }

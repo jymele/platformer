@@ -1,7 +1,9 @@
 import { Canvas } from "@react-three/fiber";
 import { Terrain } from "../models/terrain";
 import { OrbitControls } from "@react-three/drei";
-import { Player } from "../models/player";
+// import { Player } from "../models/player";
+import CharacterController from "../controllers/CharacterController";
+import { Physics } from "@react-three/rapier";
 
 export default function Experience() {
   return (
@@ -16,9 +18,10 @@ export default function Experience() {
           receiveShadow
         />
 
-        {/* <Capsule args={[]} /> */}
-        <Player />
-        <Terrain />
+        <Physics debug>
+          <CharacterController />
+          <Terrain />
+        </Physics>
       </Canvas>
     </>
   );
