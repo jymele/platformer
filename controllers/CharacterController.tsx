@@ -7,6 +7,15 @@ import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 import { useKeyboardControls } from "@react-three/drei";
 
+const normalizeAngle = (angle: number) => {
+  return ((angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+};
+
+const lerpAngle = (start: number, end: number, t: number) => {
+  const delta = normalizeAngle(end - start);
+  return start + delta * t;
+};
+
 export default function CharacterController() {
   const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED } = useControls(
     "Character Control",
@@ -25,6 +34,7 @@ export default function CharacterController() {
   const rb = useRef<Rapier.RigidBody | null>(null);
   const container = React.useRef<THREE.Group>(null);
 
+  const characterRotationTarget = useRef(0);
   const rotationTarget = useRef(0);
 
   const cameraTarget = React.useRef<THREE.Group>(null);
@@ -38,6 +48,14 @@ export default function CharacterController() {
   const [, get] = useKeyboardControls();
 
   useFrame(({ camera }) => {
+    if (
+      !container.current ||
+      !cameraTarget.current ||
+      !cameraPosition.current ||
+      !character.current
+    )
+      return;
+
     /**
      * Handle character movement
      */
@@ -72,8 +90,21 @@ export default function CharacterController() {
 
       // Apply the movement
       if (movement.x || movement.z) {
-        vel.z = speed * movement.z;
+        characterRotationTarget.current = Math.atan2(movement.x, movement.z);
+        vel.x =
+          Math.sin(rotationTarget.current + characterRotationTarget.current) *
+          speed;
+        vel.z =
+          Math.cos(rotationTarget.current + characterRotationTarget.current) *
+          speed;
       }
+
+      // rotate the character to face the direction of movement
+      character.current.rotation.y = lerpAngle(
+        character.current.rotation.y,
+        characterRotationTarget.current,
+        0.1
+      );
       rb.current.setLinvel(vel, true);
     }
 
@@ -81,13 +112,6 @@ export default function CharacterController() {
      * Handle camera movement
      * The camera should follow the character but it should look at a point in front of the character
      */
-    if (
-      !container.current ||
-      !cameraTarget.current ||
-      !cameraPosition.current ||
-      !character.current
-    )
-      return;
 
     // Rotate the container (character and camera) to face the direction of movement
     container.current.rotation.y = THREE.MathUtils.lerp(
