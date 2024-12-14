@@ -6,17 +6,27 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 import { useKeyboardControls } from "@react-three/drei";
-// import { cameraPosition } from "three/webgpu";
-// import { Capsule } from "@react-three/drei";
 
 export default function CharacterController() {
-  const { WALK_SPEED, RUN_SPEED } = useControls("Character Control", {
-    WALK_SPEED: { value: 0.8, min: 0.1, max: 4, step: 0.1 },
-    RUN_SPEED: { value: 1.6, min: 0.2, max: 12, step: 0.1 },
-  });
+  const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED } = useControls(
+    "Character Control",
+    {
+      WALK_SPEED: { value: 0.8, min: 0.1, max: 4, step: 0.1 },
+      RUN_SPEED: { value: 1.6, min: 0.2, max: 12, step: 0.1 },
+      ROTATION_SPEED: {
+        value: degToRad(1),
+        min: degToRad(0.1),
+        max: degToRad(5),
+        step: degToRad(0.1),
+      },
+    }
+  );
 
   const rb = useRef<Rapier.RigidBody | null>(null);
   const container = React.useRef<THREE.Group>(null);
+
+  const rotationTarget = useRef(0);
+
   const cameraTarget = React.useRef<THREE.Group>(null);
   const cameraPosition = React.useRef<THREE.Group>(null);
   const character = React.useRef<THREE.Group>(null);
@@ -49,10 +59,15 @@ export default function CharacterController() {
       const speed = get().run ? RUN_SPEED : WALK_SPEED;
 
       if (get().left) {
-        movement.x = -1;
+        movement.x = 1;
       }
       if (get().right) {
-        movement.x = 1;
+        movement.x = -1;
+      }
+
+      // Handle rotation
+      if (movement.x) {
+        rotationTarget.current += ROTATION_SPEED * movement.x;
       }
 
       // Apply the movement
@@ -73,6 +88,14 @@ export default function CharacterController() {
       !character.current
     )
       return;
+
+    // Rotate the container (character and camera) to face the direction of movement
+    container.current.rotation.y = THREE.MathUtils.lerp(
+      container.current.rotation.y,
+      rotationTarget.current,
+      0.1
+    );
+
     cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
     camera.position.lerp(cameraWorldPosition.current, 0.1);
 
@@ -98,3 +121,10 @@ export default function CharacterController() {
     </>
   );
 }
+
+function degToRad(degrees: number): number {
+  return degrees * (Math.PI / 180);
+}
+// function degToRad(arg0: number): any {
+//   throw new Error("Function not implemented.");
+// }
