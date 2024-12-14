@@ -20,8 +20,8 @@ export default function CharacterController() {
   const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED } = useControls(
     "Character Control",
     {
-      WALK_SPEED: { value: 0.8, min: 0.1, max: 4, step: 0.1 },
-      RUN_SPEED: { value: 1.6, min: 0.2, max: 12, step: 0.1 },
+      WALK_SPEED: { value: 1.2, min: 0.1, max: 4, step: 0.1 },
+      RUN_SPEED: { value: 1.8, min: 0.2, max: 12, step: 0.1 },
       ROTATION_SPEED: {
         value: degToRad(1),
         min: degToRad(0.1),
@@ -137,7 +137,7 @@ export default function CharacterController() {
           <group ref={cameraTarget} position-z={1.5} />
           <group ref={cameraPosition} position-y={2.5} position-z={-4} />
           <group ref={character}>
-            <Player position-y={-0.29} />
+            <Player position-y={-0.45} />
           </group>
         </group>
         <CapsuleCollider args={[0.16, 0.32]} />
