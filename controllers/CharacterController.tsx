@@ -1,6 +1,7 @@
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import * as Rapier from "@dimforge/rapier3d-compat";
-import { Player } from "../models/player";
+// import { Player } from "../models/player";
+import { Character } from "../models/character";
 import React, { useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
@@ -137,7 +138,8 @@ export default function CharacterController() {
           <group ref={cameraTarget} position-z={1.5} />
           <group ref={cameraPosition} position-y={2.5} position-z={-4} />
           <group ref={character}>
-            <Player position-y={-0.45} />
+            {/* <Player position-y={-0.45} /> */}
+            <Character scale={0.3} position-y={-0.35} />
           </group>
         </group>
         <CapsuleCollider args={[0.16, 0.32]} />
