@@ -10,10 +10,14 @@ import { RigidBody } from "@react-three/rapier";
 
 type GLTFResult = GLTF & {
   nodes: {
-    Cube: THREE.Mesh;
+    Cube077: THREE.Mesh;
+    Cube154: THREE.Mesh;
+    Plane: THREE.Mesh;
   };
   materials: {
+    Grass: THREE.MeshStandardMaterial;
     Material: THREE.MeshStandardMaterial;
+    Lake: THREE.MeshStandardMaterial;
   };
 };
 
@@ -26,8 +30,26 @@ export function Terrain(props: JSX.IntrinsicElements["group"]) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Cube.geometry}
+          geometry={nodes.Cube077.geometry}
+          material={materials.Grass}
+          position={[-6.5, -0.5, -5.5]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube154.geometry}
           material={materials.Material}
+          position={[-8.5, 0, -0.5]}
+        />
+      </RigidBody>
+      <RigidBody type="fixed" colliders="cuboid" friction={0.0}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Plane.geometry}
+          material={materials.Lake}
+          position={[2.539, -0.391, -1.483]}
+          scale={1.812}
         />
       </RigidBody>
     </group>
