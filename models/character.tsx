@@ -25,23 +25,31 @@ type GLTFResult = GLTF & {
   animations: GLTFAction[];
 };
 
-type ActionName = "idle";
-// type GLTFActions = Record<ActionName, THREE.AnimationAction>;
+export type ActionName = "idle" | "walking" | "running";
+
+type CharProps = JSX.IntrinsicElements["group"] & {
+  action: ActionName;
+};
+
 interface GLTFAction extends THREE.AnimationClip {
   name: ActionName;
 }
 
-export function Character(props: JSX.IntrinsicElements["group"]) {
-  const group = useRef<THREE.Group>();
+export function Character(props: CharProps) {
+  const group = useRef<THREE.Group>(null);
   const { nodes, materials, animations } = useGLTF(
     "/models/char.glb"
   ) as GLTFResult;
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
+    // actions.idle?.stop();
+    // actions.walking?.stop();
+    // actions.running?.stop();
     if (actions.idle) {
       actions.idle.play();
     }
+    console.log("actions", actions);
   }, [actions]);
 
   return (

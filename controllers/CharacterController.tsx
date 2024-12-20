@@ -1,8 +1,7 @@
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import * as Rapier from "@dimforge/rapier3d-compat";
-// import { Player } from "../models/player";
-import { Character } from "../models/character";
-import React, { useRef } from "react";
+import { Character, ActionName } from "../models/character";
+import React, { useRef, useState } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
@@ -18,6 +17,8 @@ const lerpAngle = (start: number, end: number, t: number) => {
 };
 
 export default function CharacterController() {
+  const [action, setAction] = useState<ActionName>("idle");
+
   const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED } = useControls(
     "Character Control",
     {
@@ -48,6 +49,8 @@ export default function CharacterController() {
 
   const [, get] = useKeyboardControls();
 
+  // const walkOrRun: ActionName = get().shift ? "running" : "walking";
+
   useFrame(({ camera }) => {
     if (
       !container.current ||
@@ -69,9 +72,11 @@ export default function CharacterController() {
       };
 
       if (get().forward) {
+        // setAction(walkOrRun);
         movement.z = 1;
       }
       if (get().backward) {
+        // setAction(walkOrRun);
         movement.z = -1;
       }
 
@@ -139,7 +144,7 @@ export default function CharacterController() {
           <group ref={cameraPosition} position-y={2.5} position-z={-4} />
           <group ref={character}>
             {/* <Player position-y={-0.45} /> */}
-            <Character scale={0.3} position-y={-0.35} />
+            <Character scale={0.3} position-y={-0.35} action={action} />
           </group>
         </group>
         <CapsuleCollider args={[0.16, 0.32]} />
